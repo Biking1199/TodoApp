@@ -36,7 +36,7 @@ function App() {
       <p>Todoアプリ</p>
       <div className="addTodo">
         <input value={text} onChange={(e) => setText(e.target.value)} />
-        <button onClick={() => onClickAdd}>追加</button>
+        <button onClick={() => onClickAdd()}>追加</button>
       </div>
       <div className="incompleteContainer">
         <p>未完了</p>
