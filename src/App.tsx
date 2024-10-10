@@ -5,11 +5,17 @@ function App() {
   const [text, setText] = useState<string>("");
   const [todo, setTodo] = useState<string[]>([]);
   const [compTodo, setCompTodo] = useState<string[]>([]);
+  const [is, setIs] = useState<boolean>(false);
 
   // 追加
   const onClickAdd = () => {
-    setTodo([...todo, text]);
-    setText("");
+    if (text !== "") {
+      setTodo([...todo, text]);
+      setText("");
+      setIs(false);
+    } else {
+      setIs(true);
+    }
   };
 
   // 完了
@@ -33,7 +39,10 @@ function App() {
   };
   return (
     <div className="App">
-      <p>Todoアプリ</p>
+      <p className="border-b border-gray-200 w-1/2">Todoアプリ</p>
+      {is === true ? (
+        <p className="text-rose-600">タスク名を入力してください。</p>
+      ) : null}
       <div className="addTodo">
         <input value={text} onChange={(e) => setText(e.target.value)} />
         <button onClick={() => onClickAdd()}>追加</button>
@@ -43,10 +52,12 @@ function App() {
         {todo.map((text, index) => (
           <ul key={index}>
             <li>
-              {index + 1} : {text}
+              <p className="text-gray-500">●{text}</p>
             </li>
-            <button onClick={() => onClickComplete(text)}>完了</button>
-            <button onClick={() => onClickDelete(text)}>削除</button>
+            <div className="flex-wrap ">
+              <button onClick={() => onClickComplete(text)}>完了</button>
+              <button onClick={() => onClickDelete(text)}>削除</button>
+            </div>
           </ul>
         ))}
       </div>

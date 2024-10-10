@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
   width: 100%;
 }
@@ -10,4 +14,25 @@ ul {
   display: flex;
   list-style: none;
   gap: 8px;
+  background-color: #f2e5bf;
+  padding: 5px;
+  margin-bottom: 5px;
+  width: 50%;
+  border-radius: 5px;
+  justify-content: space-between;
+}
+
+button {
+  background-color: #fd8b51;
+  color: white;
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+
+input {
+  border: 1px solid #969da3;
+  border-radius: 3px;
+  color: #333;
+  font-size: 1em;
+  line-height: 1.5;
 }
