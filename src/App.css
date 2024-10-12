@@ -7,26 +7,46 @@
 }
 
 .addTodo {
-  gap: 8px;
+  gap: 10px;
 }
 
+.header {
+  background-color: #222831;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 5%;
+  border-top: 1px solid #eaeaea;
+  border-bottom: 1px solid #eaeaea;
+}
 ul {
   display: flex;
   list-style: none;
-  gap: 8px;
-  background-color: #f2e5bf;
-  padding: 5px;
-  margin-bottom: 5px;
-  width: 50%;
+  gap: 10px;
+  padding: 0.5rem;
+  background: #f7f7f7;
+  text-decoration: none;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.22);
+  border-radius: 3px;
+}
+.taskContainer {
+  display: flex;
+  justify-content: space-around;
+}
+.status {
+  border-bottom: 1px solid #eaeaea;
+  background-color: #252a34;
+  color: white;
+  padding: 5px 0;
   border-radius: 5px;
-  justify-content: space-between;
+  text-align: center;
 }
 
 button {
-  background-color: #fd8b51;
+  background-color: #00adb5;
   color: white;
   border-radius: 5px;
   padding: 2px 5px;
+  box-shadow: 4px 4px 15px -5px #777777;
 }
 
 input {
@@ -35,4 +55,23 @@ input {
   color: #333;
   font-size: 1em;
   line-height: 1.5;
+}
+
+.incompleteContainer .progressContainer .completeContainer {
+  flex: 1;
+}
+
+.incompTag {
+  border-left: solid 6px #ff3c3c;
+  color: #ff3c3c;
+}
+
+.progressTag {
+  border-left: solid 6px #efcc4c;
+  color: #efcc4c;
+}
+
+.compTag {
+  border-left: solid 6px #58ad5a;
+  color: #58ad5a;
 }
