@@ -1,3 +1,56 @@
+# todo アプリの仕様
+
+## タスクのステータス
+
+●「未完了」、「進行中」、「完了」の３つそれぞれを管理  
+未完了：const [incompTodo, setIncompTodo] = useState<Task[]>([]);  
+進行中：const [progress, setProgress] = useState<Task[]>([]);  
+完了：const [compTodo, setCompTodo] = useState<Task[]>([]);
+
+●Task オブジェクトの定義  
+interface Task {  
+ id: string;  
+ name: string;  
+ term: Date | null;  
+}
+
+# 機能
+
+実装した機能について、処理の動きを記述。  
+未実装の機能については、処理のイメージを記述。
+
+### 追加ボタン（実装済み、一部問題あり）
+
+1. タスク名、期限(形式：xxxx/yy/zz)でテキストボックスに入力
+2. 未完了のステータスにタスクを追加  
+   ＊タスクの項目：ID, タスク名, 期限(未完成：<font color="Red">表示に問題あり</font>)
+
+### 削除ボタン　（実装済み、一部問題あり）
+
+1. 削除したいタスクのチェックボックスに ✔ をつける
+2. 右上の削除ボタンを押す
+3. チェックをつけたタスクを削除  
+   <font color="Red">\*チェックボックスの仕様に問題あり</font>
+
+### 編集ボタン　（未実装）
+
+実装したい処理のイメージ
+
+1. 編集したいチェックボックスに ✔ をつける
+2. 右上の編集ボタンを押す
+3. ✔ をつけたタスクのタスク名と期限がテキストボックスにそれぞれ表示  
+   編集ボタンから完了ボタンに切り替え
+4. テキストを変更して、完了ボタンを押す
+5. 編集完了  
+   完了ボタンを編集ボタンに切り替え
+
+### ←/→ ボタン　（実装済み）
+
+タスクのステータス変更のボタン  
+タスクは「未完了」「進行中」「完了」の順に横並びになっている。  
+→ ボタン：右にステータスが変更される。  
+← ボタン：左にステータスが変更される。
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
