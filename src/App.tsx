@@ -6,91 +6,67 @@ function App() {
   interface Task {
     id: string;
     name: string;
-    term: Date | null;
+    term: string | undefined;
+    status: "未完了" | "進行中" | "完了";
+    isCheck: boolean;
   }
 
   const [taskName, setTaskName] = useState<string>("");
-  const [termValue, setTermValue] = useState<string>("");
-  const [termDate, setTermDate] = useState<Date | null>(null);
-  const [selectedTaskID, setSelectedTaskID] = useState<string | null>(null);
-  const [isCheck, setIsCheck] = useState<boolean>(false);
-  const [incompTodo, setIncompTodo] = useState<Task[]>([]);
-  const [progress, setProgress] = useState<Task[]>([]);
-  const [compTodo, setCompTodo] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [termValue, setTermValue] = useState<string | undefined>("");
 
   // 未完了に追加
-  const onClickAdd = () => {
-    setTermDate(changeDate());
+  const addTask = () => {
     if (taskName !== "") {
       const newTask: Task = {
         id: uuidv4(),
         name: taskName,
-        term: termDate,
+        term: termValue,
+        status: "未完了",
+        isCheck: false,
       };
-      setIncompTodo([...incompTodo, newTask]);
+      setTasks([...tasks, newTask]);
       setTaskName("");
       setTermValue("");
     }
   };
-  // 進行中に
-  const onClickProgress = (text: string) => {
-    const task = incompTodo.find((t) => t.name === text);
-    if (task) {
-      setProgress([...progress, task]);
-      setIncompTodo(incompTodo.filter((t) => t.name !== text));
-    }
-  };
-  // 完了に
-  const onClickComplete = (text: string) => {
-    const task = progress.find((t) => t.name === text);
-    if (task) {
-      setCompTodo([...compTodo, task]);
-      setProgress(progress.filter((t) => t.name !== text));
-    }
-  };
-
-  // 進行中に戻す
-  const returnProgress = (text: string) => {
-    const task = compTodo.find((t) => t.name === text);
-    if (task) {
-      setProgress([...progress, task]);
-      setCompTodo(compTodo.filter((t) => t.name !== text));
-    }
-  };
-  // 未完了に戻す
-  const returnIncomplete = (text: string) => {
-    const task = progress.find((t) => t.name === text);
-    if (task) {
-      setIncompTodo([...incompTodo, task]);
-      setProgress(progress.filter((t) => t.name !== text));
-    }
+  // ステータス変更
+  const changeStatus = (
+    id: string,
+    newStatus: "未完了" | "進行中" | "完了"
+  ) => {
+    const updateTask = tasks.map((task) =>
+      task.id === id ? { ...task, status: newStatus } : task
+    );
+    setTasks(updateTask);
   };
 
   // チェックされたタスクのIDを管理
   const selectedTask = (taskID: string) => {
-    setSelectedTaskID(taskID);
+    const updateTask = tasks.map((task) =>
+      task.id === taskID ? { ...task, isCheck: !task.isCheck } : task
+    );
+    setTasks(updateTask);
   };
+
   // 削除
-  const onClickDelete = () => {
-    if (selectedTask !== null) {
-      setIncompTodo(incompTodo.filter((task) => task.id !== selectedTaskID));
-      setProgress(progress.filter((task) => task.id !== selectedTaskID));
-      setCompTodo(compTodo.filter((task) => task.id !== selectedTaskID));
+  const deleteTask = () => {
+    const updateTask = tasks.filter((task) => task.isCheck === false);
+    setTasks(updateTask);
+  };
+
+  // 編集
+  const editing = () => {
+    const editingTask = tasks.find((task) => task.isCheck === true);
+    if (editingTask !== undefined) {
+      setTaskName(editingTask.name);
+      setTermValue(editingTask.term);
     }
   };
 
-  // 日付変換
-  function changeDate(): Date | null {
-    const parts = termValue.split("/");
-    if (parts.length === 3 && parts !== null) {
-      const year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      const date = new Date(year, month, day);
-      return date;
-    }
-    return null;
-  }
+  const incompleteTasks = tasks.filter((task) => task.status === "未完了");
+  const progressTasks = tasks.filter((task) => task.status === "進行中");
+  const completeTasks = tasks.filter((task) => task.status === "完了");
 
   return (
     <div className="App">
@@ -110,72 +86,79 @@ function App() {
               setTermValue(e.target.value);
             }}
           />
-          <button onClick={() => onClickAdd()}>追加</button>
+          <button onClick={() => addTask()}>追加</button>
         </div>
         <div>
-          <button>編集</button>
-          <button onClick={() => onClickDelete()}>削除</button>
+          <button onClick={() => editing()}>編集</button>
+          <button onClick={() => deleteTask()}>削除</button>
         </div>
       </div>
       <div className="taskContainer">
         <div className="incompleteContainer">
           <p className="status">未完了</p>
-          {incompTodo.map((text, index) => (
+          {incompleteTasks.map((task, index) => (
             <ul key={index} className="incompTag">
               <input
                 type="checkbox"
-                checked={selectedTaskID === text.id}
-                onChange={() => selectedTask(text.id)}
+                checked={task.isCheck}
+                onChange={() => selectedTask(task.id)}
               />
               <li>
                 <p>
-                  {text.id} : {text.name} :
-                  {text.term ? text.term.toLocaleDateString() : "期限未登録"}
+                  {task.name} : {task.status} :
+                  {task.term !== null ? task.term : "期限未登録"}
                 </p>
               </li>
               <div>
-                <button onClick={() => onClickProgress(text.name)}>→</button>
+                <button onClick={() => changeStatus(task.id, "進行中")}>
+                  →
+                </button>
               </div>
             </ul>
           ))}
         </div>
         <div className="progressContainer">
           <p className="status">進行中</p>
-          {progress.map((text, index) => (
+          {progressTasks.map((task, index) => (
             <ul key={index} className="progressTag">
               <input
                 type="checkbox"
-                checked={selectedTaskID === text.id}
-                onChange={() => selectedTask(text.id)}
+                checked={task.isCheck}
+                onChange={() => selectedTask(task.id)}
               />
               <li>
                 <p>
-                  {text.id}: {text.name}
+                  {task.name} : {task.status} :
+                  {task.term ? task.term : "期限未登録"}
                 </p>
               </li>
               <div>
-                <button onClick={() => returnIncomplete(text.name)}>←</button>
-                <button onClick={() => onClickComplete(text.name)}>→</button>
+                <button onClick={() => changeStatus(task.id, "未完了")}>
+                  ←
+                </button>
+                <button onClick={() => changeStatus(task.id, "完了")}>→</button>
               </div>
             </ul>
           ))}
         </div>
         <div className="completeContainer">
           <p className="status">完了</p>
-          {compTodo.map((text, index) => (
+          {completeTasks.map((task, index) => (
             <ul key={index} className="compTag">
               <input
                 type="checkbox"
-                checked={selectedTaskID === text.id}
-                onChange={() => selectedTask(text.id)}
+                checked={task.isCheck}
+                onChange={() => selectedTask(task.id)}
               />
               <li>
                 <p>
-                  {text.id}: {text.name}
+                  {task.name} :{task.term ? task.term : "期限未登録"}
                 </p>
               </li>
               <div>
-                <button onClick={() => returnProgress(text.name)}>←</button>
+                <button onClick={() => changeStatus(task.id, "進行中")}>
+                  ←
+                </button>
               </div>
             </ul>
           ))}
