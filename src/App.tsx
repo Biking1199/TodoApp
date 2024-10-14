@@ -12,8 +12,9 @@ function App() {
   }
 
   const [taskName, setTaskName] = useState<string>("");
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [termValue, setTermValue] = useState<string | undefined>("");
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [editSwitch, setEditSwitch] = useState<boolean>(false);
 
   // 未完了に追加
   const addTask = () => {
@@ -49,6 +50,14 @@ function App() {
     setTasks(updateTask);
   };
 
+  // チェックを外す
+  const nonCheck = () => {
+    const updateTask = tasks.map((task) =>
+      task.isCheck === true ? { ...task, isCheck: false } : task
+    );
+    setTasks(updateTask);
+  };
+
   // 削除
   const deleteTask = () => {
     const updateTask = tasks.filter((task) => task.isCheck === false);
@@ -61,7 +70,26 @@ function App() {
     if (editingTask !== undefined) {
       setTaskName(editingTask.name);
       setTermValue(editingTask.term);
+      setEditSwitch(true);
     }
+  };
+
+  // 保存
+  const saveing = () => {
+    const updateTask = tasks.map((task) =>
+      task.isCheck === true
+        ? { ...task, name: taskName, term: termValue }
+        : task
+    );
+    setTasks(updateTask);
+    setEditSwitch(false);
+  };
+
+  // キャンセル
+  const cancelEdit = () => {
+    setTaskName("");
+    setTermValue("");
+    setEditSwitch(false);
   };
 
   const incompleteTasks = tasks.filter((task) => task.status === "未完了");
@@ -86,7 +114,14 @@ function App() {
               setTermValue(e.target.value);
             }}
           />
-          <button onClick={() => addTask()}>追加</button>
+          {editSwitch === false ? (
+            <button onClick={() => addTask()}>追加</button>
+          ) : (
+            <div className="flex-1">
+              <button onClick={() => saveing()}>保存</button>
+              <button onClick={() => cancelEdit()}>キャンセル</button>
+            </div>
+          )}
         </div>
         <div>
           <button onClick={() => editing()}>編集</button>
