@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import "./App.css";
 import { v4 as uuidv4 } from "uuid";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.module.css";
 
 function App() {
   interface Task {
     id: string;
     name: string;
-    term: string | undefined;
+    term: Date | null;
     status: "未完了" | "進行中" | "完了";
     isCheck: boolean;
   }
 
   const [taskName, setTaskName] = useState<string>("");
-  const [termValue, setTermValue] = useState<string | undefined>("");
+  const [termValue, setTermValue] = useState<Date | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [editSwitch, setEditSwitch] = useState<boolean>(false);
 
@@ -28,7 +30,7 @@ function App() {
       };
       setTasks([...tasks, newTask]);
       setTaskName("");
-      setTermValue("");
+      setTermValue(null);
     }
   };
   // ステータス変更
@@ -50,18 +52,12 @@ function App() {
     setTasks(updateTask);
   };
 
-  // チェックを外す
-  const nonCheck = () => {
-    const updateTask = tasks.map((task) =>
-      task.isCheck === true ? { ...task, isCheck: false } : task
-    );
-    setTasks(updateTask);
-  };
-
   // 削除
   const deleteTask = () => {
     const updateTask = tasks.filter((task) => task.isCheck === false);
     setTasks(updateTask);
+    setTaskName("");
+    setTermValue(null);
   };
 
   // 編集
@@ -88,7 +84,7 @@ function App() {
   // キャンセル
   const cancelEdit = () => {
     setTaskName("");
-    setTermValue("");
+    setTermValue(null);
     setEditSwitch(false);
   };
 
@@ -106,13 +102,12 @@ function App() {
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
           />
-          <input
-            placeholder="期限: 2024/10/10"
-            type="text"
-            value={termValue}
-            onChange={(e) => {
-              setTermValue(e.target.value);
-            }}
+          <DatePicker
+            locale="ja"
+            selected={termValue}
+            dateFormatCalendar="yyyy年 MM月"
+            dateFormat="yyyy/MM/dd"
+            onChange={(date: Date | null) => setTermValue(date)}
           />
           {editSwitch === false ? (
             <button onClick={() => addTask()}>追加</button>
@@ -134,14 +129,15 @@ function App() {
           {incompleteTasks.map((task, index) => (
             <ul key={index} className="incompTag">
               <input
-                type="checkbox"
+                type="radio"
+                name="task"
                 checked={task.isCheck}
                 onChange={() => selectedTask(task.id)}
               />
               <li>
                 <p>
-                  {task.name} : {task.status} :
-                  {task.term !== null ? task.term : "期限未登録"}
+                  {task.name} :{" "}
+                  {task.term ? task.term.toLocaleDateString() : "期限未登録"}
                 </p>
               </li>
               <div>
@@ -157,14 +153,15 @@ function App() {
           {progressTasks.map((task, index) => (
             <ul key={index} className="progressTag">
               <input
-                type="checkbox"
+                type="radio"
+                name="task"
                 checked={task.isCheck}
                 onChange={() => selectedTask(task.id)}
               />
               <li>
                 <p>
-                  {task.name} : {task.status} :
-                  {task.term ? task.term : "期限未登録"}
+                  {task.name} :{" "}
+                  {task.term ? task.term.toLocaleDateString() : "期限未登録"}
                 </p>
               </li>
               <div>
@@ -181,13 +178,15 @@ function App() {
           {completeTasks.map((task, index) => (
             <ul key={index} className="compTag">
               <input
-                type="checkbox"
+                type="radio"
+                name="task"
                 checked={task.isCheck}
                 onChange={() => selectedTask(task.id)}
               />
               <li>
                 <p>
-                  {task.name} :{task.term ? task.term : "期限未登録"}
+                  {task.name} :{" "}
+                  {task.term ? task.term.toLocaleDateString() : "期限未登録"}
                 </p>
               </li>
               <div>
