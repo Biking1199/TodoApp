@@ -3,6 +3,7 @@ import "./App.css";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css";
+import { InputTaskName } from "./component/InputTaskName";
 
 function App() {
   interface Task {
@@ -97,11 +98,7 @@ function App() {
       <div className="header">
         <p className="text-white border-b border-gray-200 ">Todoアプリ</p>
         <div className="addTodo">
-          <input
-            placeholder="タスク名: 本を読む"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
-          />
+          <InputTaskName taskName={taskName} setTaskName={setTaskName} />
           <DatePicker
             locale="ja"
             selected={termValue}
